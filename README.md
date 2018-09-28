@@ -8,7 +8,7 @@ For the challenge you need to:
 1. Clone this repo:  
 `git clone git@github.com:uwaft/cav_workshop_source.git`  
 2. Create a new branch:  
-`git branch -b \<name\>_workshop`  
+`git checkout -b \<name\>_workshop`  
 3. Costomize the code with
 your own road scenario, car configuration and any other changes you want to make!
 4. Push your changes:  
