@@ -1,3 +1,5 @@
+% Bless zharry
+
 % Define an empty scenario.
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
