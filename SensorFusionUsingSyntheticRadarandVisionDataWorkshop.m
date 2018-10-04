@@ -1,6 +1,7 @@
 % Define an empty scenario.
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
+% evan com
 
 roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
 road(scenario, roadCenters, 'lanes',lanespec(2));
