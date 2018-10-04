@@ -1,4 +1,4 @@
-% Bless zharry
+% Git Test
 
 % Define an empty scenario.
 scenario = drivingScenario;
