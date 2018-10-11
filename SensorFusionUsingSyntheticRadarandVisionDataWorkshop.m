@@ -5,6 +5,16 @@ scenario.SampleTime = 0.01;
 roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
 road(scenario, roadCenters, 'lanes',lanespec(2));
 
+roadCentersCaleb = [100 -100; 100 -50; 100 0; 100 50; 100 100;100 150;100 200;100 250;100 1000];
+road(scenario, roadCentersCaleb, 'lanes',lanespec(2));
+
+roadCentersCaleb2 = [140 -100; 140 -50; 140 0; 140 50; 140 100;140 150;140 200;140 250;140 1000];
+road(scenario, roadCentersCaleb2, 'lanes',lanespec(2));
+
+roadLoopdeLoopdeLoopdeLoop = [80 20;80 -20; 120 -20; 120 20;80 20];
+road(scenario, roadLoopdeLoopdeLoopdeLoop, 'lanes',lanespec(2));
+
+loopyLoopJustForCar = [80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20];
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
 % vehicle on the right lane by subtracting off half a lane width (1.8 m)
 % from the centerline of the road.
@@ -15,16 +25,45 @@ path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
 leadCar = vehicle(scenario, 'ClassID', 1);
 path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
 
-% Add a car that travels at 35 m/s along the road and passes the ego vehicle
+% Add a loopy boi
+loopyBoi = vehicle(scenario, 'ClassID', 1);
+path(loopyBoi, [65 0; loopyLoopJustForCar(3:end,:)] - [0 1.8], 100); % On right lane
+
+% Add another car in front of the ego vehicle (EDITED BY CALEB)ITS ORANGE
+calebCar = vehicle(scenario, 'ClassID', 1);
+path(calebCar, [80 0; roadCenters(3:end,:)] - [0 1.3], 25); % On right lane
+
+% Add a car that's goona smack you on the side (PURPLE)
+calebCarSmack = vehicle(scenario, 'ClassID', 1);
+path(calebCarSmack, [30 0; roadCentersCaleb(3:end,:)] - [0 1.8], 45); % On right lane
+
+% Incoming cars from the right (GREEN)
+calebIncomingRight = vehicle(scenario, 'ClassID', 1);
+path(calebIncomingRight, [100 -100; roadCentersCaleb(3:end,:)] - [0 2], 70); % On right lane
+
+% Incoming cars from the right (2nd horizontal) (BLUE)
+calebIncomingRight2 = vehicle(scenario, 'ClassID', 1);
+path(calebIncomingRight2, [140 -100; roadCentersCaleb2(3:end,:)] - [0 2], 80); % On right lane
+
+% Incoming cars from the right (2nd horizontal) (green)
+calebIncomingRight3 = vehicle(scenario, 'ClassID', 1);
+path(calebIncomingRight3, [140 -150; roadCentersCaleb2(3:end,:)] - [0 2], 60); % On right lane
+
+% Add a car that travels at 50 m/s along the road and passes the ego vehicle
 passingCar = vehicle(scenario, 'ClassID', 1);
 waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
+path(passingCar, waypoints, 50);
+
+% Add a car that travels at 35 m/s along the road and passes the ego vehicle
+passingCar = vehicle(scenario, 'ClassID', 1);
+waypoints = [-10 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
 path(passingCar, waypoints, 35);
 
 % Add a car behind the ego vehicle
 chaseCar = vehicle(scenario, 'ClassID', 1);
 path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
 
-sensors = cell(8,1);
+sensors = cell(10,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
 sensors{1} = radarDetectionGenerator('SensorIndex', 1, 'Height', 0.2, 'MaxRange', 174, ...
     'SensorLocation', [egoCar.Wheelbase + egoCar.FrontOverhang, 0], 'FieldOfView', [20, 5]);
@@ -34,24 +73,24 @@ sensors{2} = radarDetectionGenerator('SensorIndex', 2, 'Height', 0.2, 'Yaw', 180
     'SensorLocation', [-egoCar.RearOverhang, 0], 'MaxRange', 174, 'FieldOfView', [20, 5]);
 
 % Rear-left-facing short-range radar sensor at the left rear wheel well of the car.
-sensors{3} = radarDetectionGenerator('SensorIndex', 3, 'Height', 0.2, 'Yaw', 120, ...
-    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
+sensors{3} = radarDetectionGenerator('SensorIndex', 3, 'Height', 0.2, 'Yaw', 130, ...
+    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 40, 'ReferenceRange', 50, ...
     'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Rear-right-facing short-range radar sensor at the right rear wheel well of the car.
-sensors{4} = radarDetectionGenerator('SensorIndex', 4, 'Height', 0.2, 'Yaw', -120, ...
-    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
+sensors{4} = radarDetectionGenerator('SensorIndex', 4, 'Height', 0.2, 'Yaw', -130, ...
+    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 40, 'ReferenceRange', 50, ...
     'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Front-left-facing short-range radar sensor at the left front wheel well of the car.
-sensors{5} = radarDetectionGenerator('SensorIndex', 5, 'Height', 0.2, 'Yaw', 60, ...
-    'SensorLocation', [egoCar.Wheelbase, egoCar.Width/2], 'MaxRange', 30, ...
+sensors{5} = radarDetectionGenerator('SensorIndex', 5, 'Height', 0.2, 'Yaw', 50, ...
+    'SensorLocation', [egoCar.Wheelbase, egoCar.Width/2], 'MaxRange', 40, ...
     'ReferenceRange', 50, 'FieldOfView', [90, 5], 'AzimuthResolution', 10, ...
     'RangeResolution', 1.25);
 
 % Front-right-facing short-range radar sensor at the right front wheel well of the car.
-sensors{6} = radarDetectionGenerator('SensorIndex', 6, 'Height', 0.2, 'Yaw', -60, ...
-    'SensorLocation', [egoCar.Wheelbase, -egoCar.Width/2], 'MaxRange', 30, ...
+sensors{6} = radarDetectionGenerator('SensorIndex', 6, 'Height', 0.2, 'Yaw', -50, ...
+    'SensorLocation', [egoCar.Wheelbase, -egoCar.Width/2], 'MaxRange', 40, ...
     'ReferenceRange', 50, 'FieldOfView', [90, 5], 'AzimuthResolution', 10, ...
     'RangeResolution', 1.25);
 
@@ -59,9 +98,17 @@ sensors{6} = radarDetectionGenerator('SensorIndex', 6, 'Height', 0.2, 'Yaw', -60
 sensors{7} = visionDetectionGenerator('SensorIndex', 7, 'FalsePositivesPerImage', 0.1, ...
     'SensorLocation', [0.75*egoCar.Wheelbase 0], 'Height', 1.1);
 
-% Rear-facing camera located at rear windshield.
+% Rear-facing camera located at rear windshield. (Big blue cone in back)
 sensors{8} = visionDetectionGenerator('SensorIndex', 8, 'FalsePositivesPerImage', 0.1, ...
     'SensorLocation', [0.2*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 180);
+
+% Rear-facing camera located at rear windshield. (Big green cone in right)
+sensors{9} = visionDetectionGenerator('SensorIndex', 9, 'FalsePositivesPerImage', 0.1, ...
+    'SensorLocation', [0.5*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 270);
+
+% Rear-facing camera located at rear windshield. (Big green cone in left)
+sensors{10} = visionDetectionGenerator('SensorIndex', 10, 'FalsePositivesPerImage', 0.1, ...
+    'SensorLocation', [0.5*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 90);
 
 % Initiate the tracker
 tracker = multiObjectTracker('FilterInitializationFcn', @initSimDemoFilter, ...
@@ -203,6 +250,13 @@ function BEP = createDemoDisplay(egoCar, sensors)
     % Plot the coverage areas for vision sensors
     for i = 7:8
         cap = coverageAreaPlotter(BEP,'FaceColor','blue','EdgeColor','blue');
+        plotCoverageArea(cap, sensors{i}.SensorLocation,...
+            sensors{i}.MaxRange, sensors{i}.Yaw, 45);
+    end
+    
+    % Plot the coverage areas for CALEB's vision sensors
+    for i = 9:10
+        cap = coverageAreaPlotter(BEP,'FaceColor','green','EdgeColor','green');
         plotCoverageArea(cap, sensors{i}.SensorLocation,...
             sensors{i}.MaxRange, sensors{i}.Yaw, 45);
     end
