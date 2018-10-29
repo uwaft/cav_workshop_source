@@ -2,52 +2,52 @@
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
-road(scenario, roadCenters, 'lanes',lanespec(2));
+road_0 = [0 0; 50 0; 100 0; 250 20; 500 40];
+road(scenario, road_0, 'lanes',lanespec(2));
 
-roadCentersCaleb = [100 -100; 100 -50; 100 0; 100 50; 100 100;100 150;100 200;100 250;100 1000];
-road(scenario, roadCentersCaleb, 'lanes',lanespec(2));
+road_1 = [100 -100; 100 -50; 100 0; 100 50; 100 100;100 150;100 200;100 250;100 1000];
+road(scenario, road_1, 'lanes',lanespec(2));
 
-roadCentersCaleb2 = [140 -100; 140 -50; 140 0; 140 50; 140 100;140 150;140 200;140 250;140 1000];
-road(scenario, roadCentersCaleb2, 'lanes',lanespec(2));
+road_2 = [140 -100; 140 -50; 140 0; 140 50; 140 100;140 150;140 200;140 250;140 1000];
+road(scenario, road_2, 'lanes',lanespec(2));
 
-roadLoopdeLoopdeLoopdeLoop = [80 20;80 -20; 120 -20; 120 20;80 20];
-road(scenario, roadLoopdeLoopdeLoopdeLoop, 'lanes',lanespec(2));
+road_Loop = [80 20;80 -20; 120 -20; 120 20;80 20];
+road(scenario, road_Loop, 'lanes',lanespec(2));
 
-loopyLoopJustForCar = [80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20];
+road_Loop_SingleCar = [80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20;80 20;80 -20; 120 -20; 120 20;80 20];
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
 % vehicle on the right lane by subtracting off half a lane width (1.8 m)
 % from the centerline of the road.
 egoCar = vehicle(scenario, 'ClassID', 1);
-path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
+path(egoCar, road_0(2:end,:) - [0 1.8], 25); % On right lane
 
 % Add a car in front of the ego vehicle
 leadCar = vehicle(scenario, 'ClassID', 1);
-path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
+path(leadCar, [70 0; road_0(3:end,:)] - [0 1.8], 25); % On right lane
 
 % Add a loopy boi
-loopyBoi = vehicle(scenario, 'ClassID', 1);
-path(loopyBoi, [65 0; loopyLoopJustForCar(3:end,:)] - [0 1.8], 100); % On right lane
+car_Loop = vehicle(scenario, 'ClassID', 1);
+path(car_Loop, [65 0; road_Loop_SingleCar(3:end,:)] - [0 1.8], 100); % On right lane
 
 % Add another car in front of the ego vehicle (EDITED BY CALEB)ITS ORANGE
 calebCar = vehicle(scenario, 'ClassID', 1);
-path(calebCar, [80 0; roadCenters(3:end,:)] - [0 1.3], 25); % On right lane
+path(calebCar, [80 0; road_0(3:end,:)] - [0 1.3], 25); % On right lane
 
 % Add a car that's goona smack you on the side (PURPLE)
 calebCarSmack = vehicle(scenario, 'ClassID', 1);
-path(calebCarSmack, [30 0; roadCentersCaleb(3:end,:)] - [0 1.8], 45); % On right lane
+path(calebCarSmack, [30 0; road_1(3:end,:)] - [0 1.8], 45); % On right lane
 
 % Incoming cars from the right (GREEN)
 calebIncomingRight = vehicle(scenario, 'ClassID', 1);
-path(calebIncomingRight, [100 -100; roadCentersCaleb(3:end,:)] - [0 2], 70); % On right lane
+path(calebIncomingRight, [100 -100; road_1(3:end,:)] - [0 2], 70); % On right lane
 
 % Incoming cars from the right (2nd horizontal) (BLUE)
 calebIncomingRight2 = vehicle(scenario, 'ClassID', 1);
-path(calebIncomingRight2, [140 -100; roadCentersCaleb2(3:end,:)] - [0 2], 80); % On right lane
+path(calebIncomingRight2, [140 -100; road_2(3:end,:)] - [0 2], 80); % On right lane
 
 % Incoming cars from the right (2nd horizontal) (green)
 calebIncomingRight3 = vehicle(scenario, 'ClassID', 1);
-path(calebIncomingRight3, [140 -150; roadCentersCaleb2(3:end,:)] - [0 2], 60); % On right lane
+path(calebIncomingRight3, [140 -150; road_2(3:end,:)] - [0 2], 60); % On right lane
 
 % Add a car that travels at 50 m/s along the road and passes the ego vehicle
 passingCar = vehicle(scenario, 'ClassID', 1);
@@ -61,7 +61,7 @@ path(passingCar, waypoints, 35);
 
 % Add a car behind the ego vehicle
 chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
+path(chaseCar, [25 0; road_0(1:end,:)] - [0 1.8], 25); % On right lane
 
 sensors = cell(10,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
