@@ -2,7 +2,13 @@
 
 Source code for the CAV workshop/challenge.
 
-Here you can see the final code that you guys will be able to make by the end of the workshop. 
+Here you can see the final code that you guys will be able to make by the end of the workshop.
+
+MAKE SSH KEYS:
+
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+
+https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
 
 For the challenge you need to:  
 1. Clone this repo:  
