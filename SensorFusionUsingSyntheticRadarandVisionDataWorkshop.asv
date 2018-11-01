@@ -5,8 +5,8 @@ scenario.SampleTime = 0.01;
 roadCenters = [0 0; 50 0; 100 0; 150 10; 250 20; 500 40];
 road(scenario, roadCenters, 'lanes',lanespec(3));
 
-roadcentersIntersecting = [250 -250; 250 -125; 250 -50; 250 0; 250 50; 250 125; 250 250];
-road(scenario, roadcentersIntersecting, 'lanes',lanespec(2));
+roadcentersIntersecting = [250 -500; 250 -250; 250 -100; 250 0; 250 100; 250 250; 250 500];
+road2(scenario, roadcentersIntersecting, 'lanes', lanespec(2));
 
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
 % vehicle on the right lane by subtracting off half a lane width (1.8 m)
@@ -30,14 +30,11 @@ leftCar = vehicle(scenario, 'ClassID', 1);
 path(leftCar, [25 0; roadCenters(2:end,:)] + [0, 4], 20);
 
 % Added a few cars driving perpendicular to the main road on road2
+
 intersectionCar = vehicle(scenario, 'ClassID', 1);
-path(intersectionCar, roadcentersIntersecting(2:end,:) - [1.8 0], 15);
+path(intersectionCar, 
 
-intersectionCar1 = vehicle(scenario, 'ClassID', 1);
-path(intersectionCar1, roadcentersIntersecting(2:end,:) + [1.8 0], 20);
 
-intersectionCar2 = vehicle(scenario, 'ClassID', 1);
-path(intersectionCar2, roadcentersIntersecting(3:end,:) - [-1.8 0], 12);
 
 sensors = cell(10,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
@@ -234,7 +231,7 @@ function BEP = createDemoDisplay(egoCar, sensors)
     for i = 9:10
         cap = coverageAreaPlotter(BEP,'FaceColor','green','EdgeColor','green');
         plotCoverageArea(cap, sensors{i}.SensorLocation,...
-            sensors{i}.MaxRange, sensors{i}.Yaw, 45);
+            sensors{i}.MaxRange, sensors{i}.Yaw, 90);
     end
     
     % Create a vision detection plotter put it in a struct for future use
