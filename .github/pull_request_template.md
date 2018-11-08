@@ -5,6 +5,6 @@ Summary of Changes:
  
 Have you tested that everything works?
 - [ ] Yes
-- [ ] No
- 
+- [ ] No : <describe why not>
+
 Thanks for submitting a change!
