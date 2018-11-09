@@ -3,7 +3,7 @@ scenario = drivingScenario;
 scenario.SampleTime = 0.01;
 
 roadCenters = [0 0; 50 0; 100 -20; 250 20; 500 -100; 650 -150; 700 0];
-road(scenario, roadCenters, 'lanes',lanespec([3 2]));
+road(scenario, roadCenters, 'lanes',lanespec([5 3]));
 
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
 % vehicle on the right lane by subtracting off half a lane width (1.8 m)
@@ -15,6 +15,11 @@ path(egoCar, roadCenters(2:end,:) - [0 -1.8], 50); % On right lane
 leadCar = vehicle(scenario, 'ClassID', 1);
 path(leadCar, [70 0; roadCenters(3:end,:)] - [0 0], 50); % On right lane
 
+% car coming in opposite direction
+waypoints2 = [600 25; 400 20; 200 15; 100 -50.8; 50 -21.8; 0 1.8];
+carBack = vehicle(scenario, 'ClassID', 1);
+path(carBack, waypoints2 , 100);
+
 % Add a car that travels at 35 m/s along the road and passes the ego vehicle
 passingCar = vehicle(scenario, 'ClassID', 1);
 waypoints = [0 -1.8; 50 1.8; 100 -21.8; 250 21.8; 500 -101.8; 650 -151.8; 700 1.8];
@@ -24,9 +29,9 @@ path(passingCar, waypoints, 50);
 chaseCar = vehicle(scenario, 'ClassID', 1);
 path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 100); % On right lane
 
-sensors = cell(9,1);
+sensors = cell(10,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
-sensors{1} = radarDetectionGenerator('SensorIndex', 1, 'Height', 0.2, 'MaxRange', 174, ...
+sensors{1} = radarDetectionGenerator('SensorIndex', 1, 'Height', 0.2, 'MaxRange', 150, ...
     'SensorLocation', [egoCar.Wheelbase + egoCar.FrontOverhang, 0], 'FieldOfView', [20, 5]);
 
 % Rear-facing long-range radar sensor at the center of the rear bumper of the car.
@@ -35,12 +40,12 @@ sensors{2} = radarDetectionGenerator('SensorIndex', 2, 'Height', 0.2, 'Yaw', 180
 
 % Rear-left-facing short-range radar sensor at the left rear wheel well of the car.
 sensors{3} = radarDetectionGenerator('SensorIndex', 3, 'Height', 0.2, 'Yaw', 120, ...
-    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
+    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 25, 'ReferenceRange', 50, ...
     'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Rear-right-facing short-range radar sensor at the right rear wheel well of the car.
 sensors{4} = radarDetectionGenerator('SensorIndex', 4, 'Height', 0.2, 'Yaw', -120, ...
-    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
+    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 25, 'ReferenceRange', 50, ...
     'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Front-left-facing short-range radar sensor at the left front wheel well of the car.
@@ -64,6 +69,8 @@ sensors{8} = visionDetectionGenerator('SensorIndex', 8, 'FalsePositivesPerImage'
     'SensorLocation', [0.2*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 180);
 sensors{9} = visionDetectionGenerator('SensorIndex', 9, 'FalsePositivesPerImage', 0.1, ...
     'SensorLocation', [egoCar.Wheelbase, -egoCar.Width/2], 'Height', 1.1, 'Yaw', -90);
+sensors{10} = visionDetectionGenerator('SensorIndex', 10, 'FalsePositivesPerImage', 0.1, ...
+    'SensorLocation', [egoCar.Wheelbase, egoCar.Width/2], 'Height', 1.1, 'Yaw', 90);
 
 % Initiate the tracker
 tracker = multiObjectTracker('FilterInitializationFcn', @initSimDemoFilter, ...
@@ -84,8 +91,8 @@ while advance(scenario) && ishghandle(BEP.Parent)
 
     % Simulate the sensors
     detections = {};
-    isValidTime = false(1,9);
-    for i = 1:9
+    isValidTime = false(1,10);
+    for i = 1:10
         [sensorDets,numValidDets,isValidTime(i)] = sensors{i}(ta, time);
         if numValidDets
             for j = 1:numValidDets
@@ -203,7 +210,7 @@ function BEP = createDemoDisplay(egoCar, sensors)
     end
 
     % Plot the coverage areas for vision sensors
-    for i = 7:9
+    for i = 7:10
         cap = coverageAreaPlotter(BEP,'FaceColor','blue','EdgeColor','blue');
         plotCoverageArea(cap, sensors{i}.SensorLocation,...
             sensors{i}.MaxRange, sensors{i}.Yaw, 45);
