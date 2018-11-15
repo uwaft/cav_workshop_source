@@ -1,4 +1,4 @@
-% createDrivingScenario 
+ % createDrivingScenario 
 
 % Construct a drivingScenario object.
 scenario = drivingScenario;
