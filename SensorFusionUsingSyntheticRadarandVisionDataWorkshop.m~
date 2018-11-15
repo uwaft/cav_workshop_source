@@ -3,13 +3,12 @@
 % Construct a drivingScenario object.
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
-% Add all road segments to form a circular track
+% Add all road segments
 roadCenters = [9.7 3.1 0;
     19.3 -17.7 0;
     30.4 3.4 0;
     21.3 20.9 0;
     9.7 3.1 0];
-% add an incline of 10 degrees
 bankAngle = 10;
 laneSpecification = lanespec(2, 'Width', 3.925);
 road(scenario, roadCenters, bankAngle, 'Lanes', laneSpecification);
@@ -39,7 +38,7 @@ speed = 30;
 car = vehicle(scenario, ...
     'ClassID', 1, ...
     'Position', [7 -9.4 -0.3]);
-waypoints = [7 -9.4 -0.3;
+waypoints = [12.1 -9.4 -0.3;
     16.1 -14.4 -0.4;
     20.6 -18.9 0.2;
     26.3 -16.6 0.2;
