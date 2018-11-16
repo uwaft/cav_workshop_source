@@ -2,14 +2,16 @@
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
-road(scenario, roadCenters, 'lanes',lanespec(2));
+roadCenters = [0 0; 50 0; 100 0; 250 20; 300 30; 400 45; 500 40];
+road(scenario, roadCenters, 'lanes',lanespec(4));
 
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
 % vehicle on the right lane by subtracting off half a lane width (1.8 m)
 % from the centerline of the road.
 egoCar = vehicle(scenario, 'ClassID', 1);
 path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
+% waypoints1 = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
+% path(egoCar, waypoints1, 35);
 
 % Add a car in front of the ego vehicle
 leadCar = vehicle(scenario, 'ClassID', 1);
@@ -17,12 +19,41 @@ path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
 
 % Add a car that travels at 35 m/s along the road and passes the ego vehicle
 passingCar = vehicle(scenario, 'ClassID', 1);
-waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
+waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 300 28.2; 400 43.2; 500 38.2];
 path(passingCar, waypoints, 35);
+
+% Add a car that travels at 35 m/s along the road and passes the ego vehicle
+passingCar2 = vehicle(scenario, 'ClassID', 1);
+path(passingCar2, [25 0; roadCenters(2:end,:)] + [0 1.8], 35);
+
+% Add a car that travels at 25 m/s along the road and passes the ego vehicle
+passingCar3 = vehicle(scenario, 'ClassID', 1);
+path(passingCar3, [60 7.2; 70 5.4; 80 3.6; 98 0; roadCenters(3:end,:)] - [0 5.4], 25);
 
 % Add a car behind the ego vehicle
 chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
+path(chaseCar, [25 0; roadCenters(2:end,:)] - [0 1.8], 23); % On lane 3
+
+% Add a car to the right of ego vehicle
+rightCar = vehicle(scenario, 'ClassID', 1);
+path(rightCar, [45 0; roadCenters(2:end,:)] - [0 5.4], 20); % On lane 4
+
+% Add a car to the right of ego vehicle
+rightCar2 = vehicle(scenario, 'ClassID', 1);
+path(rightCar2, [55 0; roadCenters(3:end,:)] - [0 5.4], 20); % On lane 4
+
+% Add a car to the right of ego vehicle
+rightCar3 = vehicle(scenario, 'ClassID', 1);
+path(rightCar3, [85 0; roadCenters(3:end,:)] - [0 5.4], 24); % On lane 4
+
+% Add two reckless drivers
+fastCar1 = vehicle(scenario, 'ClassID', 1);
+racePoints1 = [35 -1.8; 50 1.8; 60 1.8; 70 1.8; 100 1.8; 150 1.8; 165 3; 250 18.2; 500 38.2];
+path(fastCar1, racePoints1, 45);
+
+fastCar2 = vehicle(scenario, 'ClassID', 1);
+path(fastCar2, [35 0; roadCenters(2:end,:)] + [0 5.4], 45);
+
 
 sensors = cell(8,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
