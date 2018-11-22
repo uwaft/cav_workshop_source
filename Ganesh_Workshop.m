@@ -1,28 +1,67 @@
 % Define an empty scenario.
 scenario = drivingScenario;
-scenario.SampleTime = 0.01;
+scenario.SampleTime = 1; % real time
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
-road(scenario, roadCenters, 'lanes',lanespec(2));
+% Add all road segments
+roadCenters = [-5 18.6 0;
+    20.2 18.7 0;
+    20.8 9.5 0;
+    3.1 7.3 0;
+    2 -17.2 0;
+    -10.8 -18 0;
+    -12.9 18.5 0;
+    -5 18.6 0];
+laneSpecification = lanespec(4, 'Width', 2);
+road(scenario, roadCenters, 'Lanes', laneSpecification);
 
-% Create the ego vehicle that travels at 25 m/s along the road.  Place the
-% vehicle on the right lane by subtracting off half a lane width (1.8 m)
-% from the centerline of the road.
-egoCar = vehicle(scenario, 'ClassID', 1);
-path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
+% Add the ego car
+egoCar = vehicle(scenario, ...
+    'ClassID', 1, ...
+    'Position', [21.2 21.1 0]);
+waypoints = [21.2 21.1 0;
+    24.8 13.3 0;
+    19.5 6.2 0;
+    12.7 6.9 0;
+    6.6 7 0;
+    2.1 3.5 0;
+    3.7 -3.2 0;
+    5.2 -10.8 0;
+    3.5 -18.5 0;
+    -0.2 -20.1 0;
+    -7.5 -20.8 0;
+    -14.9 -18.4 0;
+    -21.2 -11.2 0;
+    -22.2 -4 0;
+    -22.1 7.5 0;
+    -14.8 18.7 0;
+    0.2 20.5 0;
+    14.3 22.1 0;
+    20.4 21.1 0];
+speed = 1;
+trajectory(egoCar, waypoints, speed);
 
-% Add a car in front of the ego vehicle
-leadCar = vehicle(scenario, 'ClassID', 1);
-path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
-
-% Add a car that travels at 35 m/s along the road and passes the ego vehicle
-passingCar = vehicle(scenario, 'ClassID', 1);
-waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
-path(passingCar, waypoints, 35);
-
-% Add a car behind the ego vehicle
-chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
+% Add the non-ego actors
+car1 = vehicle(scenario, ...
+    'ClassID', 1, ...
+    'Position', [15.3 8.8 0]);
+waypoints = [15.3 8.8 0;
+    6.5 9.5 0;
+    -0.6 6 0;
+    0.6 -4.5 0;
+    0.8 -15.8 0;
+    -6.6 -17.6 0;
+    -15.7 -13.3 0;
+    -22 -8.7 0;
+    -27 -0.2 0;
+    -22.8 13.7 0;
+    -14.1 16.6 0;
+    -4.7 17.8 0;
+    8.2 19.9 0;
+    16.7 19.1 0;
+    21.2 13.4 0;
+    16.9 9.1 0];
+speed = 2;
+trajectory(car1, waypoints, speed);
 
 sensors = cell(8,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
