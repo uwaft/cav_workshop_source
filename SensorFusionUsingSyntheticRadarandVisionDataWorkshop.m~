@@ -1,28 +1,67 @@
-% Define an empty scenario.
+% createDrivingScenario 
+
+% Construct a drivingScenario object.
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
+% Add all road segments
+roadCenters = [9.7 3.1 0;
+    19.3 -17.7 0;
+    30.4 3.4 0;
+    21.3 20.9 0;
+    9.7 3.1 0];
+bankAngle = 10;
+laneSpecification = lanespec(2, 'Width', 3.925);
+road(scenario, roadCenters, bankAngle, 'Lanes', laneSpecification);
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
-road(scenario, roadCenters, 'lanes',lanespec(2));
+% Add the ego car
+egoCar = vehicle(scenario, ...
+    'ClassID', 1, ...
+    'Position', [12 1.6 -0.4]);
+waypoints = [12 1.6 -0.4;
+    12.9 11.7 -0.3;
+    16.7 17.5 -0.3;
+    22.1 18.9 -0.3;
+    26.9 16 -0.2;
+    28.5 7.9 -0.3;
+    28.7 -4.5 -0.3;
+    25.4 -12.9 -0.3;
+    20.2 -15.9 -0.3;
+    14.2 -13.3 -0.3;
+    11.9 -8 -0.3;
+    11.9 -0.3 -0.4;
+    11.4 3.1 -0.3];
+speed = 30;
 
-% Create the ego vehicle that travels at 25 m/s along the road.  Place the
-% vehicle on the right lane by subtracting off half a lane width (1.8 m)
-% from the centerline of the road.
-egoCar = vehicle(scenario, 'ClassID', 1);
-path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
+    trajectory(egoCar, waypoints, speed);
+   
+% Add the non-ego actors
+car = vehicle(scenario, ...
+    'ClassID', 1, ...
+    'Position', [7 -9.4 -0.3]);
+waypoints = [12.1 -9.4 -0.3;
+    16.1 -14.4 -0.4;
+    20.6 -18.9 0.2;
+    26.3 -16.6 0.2;
+    31.2 -12.2 0.4;
+    33 -4.6 0.4;
+    32.8 4.7 0.4;
+    31.8 12.8 0.4;
+    30 17.3 0.4;
+    27 21.1 0.4;
+    23 22.5 0.3;
+    17.7 21.9 0.2;
+    13.6 20.4 0.3;
+    10.8 16.9 0.3;
+    8.1 8.5 0.3;
+    7.3 1.1 0.4;
+    8 -7.6 0.3;
+    10.6 -14.4 0.3;
+    15.2 -17.9 0.2;
+    12.1 -9.4 -0.3];
+speed = 30;
 
-% Add a car in front of the ego vehicle
-leadCar = vehicle(scenario, 'ClassID', 1);
-path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
+    trajectory(car, waypoints, speed);
 
-% Add a car that travels at 35 m/s along the road and passes the ego vehicle
-passingCar = vehicle(scenario, 'ClassID', 1);
-waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
-path(passingCar, waypoints, 35);
-
-% Add a car behind the ego vehicle
-chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
 
 sensors = cell(8,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
@@ -212,7 +251,7 @@ function BEP = createDemoDisplay(egoCar, sensors)
 
     % Combine all radar detections into one entry and store it for later update
     detectionPlotter(BEP, 'DisplayName','radar', 'MarkerEdgeColor','red');
-
+    
     % Add road borders to plot
     laneMarkingPlotter(BEP, 'DisplayName','lane markings');
 
