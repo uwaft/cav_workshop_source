@@ -2,28 +2,69 @@
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
-road(scenario, roadCenters, 'lanes',lanespec(2));
+roadCenters = [12.1 12.8 0;
+    22.8 20.7 0;
+    36.5 21.5 0;
+    41.6 14.7 0;
+    38.1 6.3 0;
+    34 3.5 0;
+    33.7 -18.2 0;
+    12.5 -22.3 0;
+    12.1 12.8 0];
+laneSpecification = lanespec(2, 'Width', 3.925);
+road(scenario, roadCenters, 'Lanes', laneSpecification);
 
-% Create the ego vehicle that travels at 25 m/s along the road.  Place the
-% vehicle on the right lane by subtracting off half a lane width (1.8 m)
-% from the centerline of the road.
-egoCar = vehicle(scenario, 'ClassID', 1);
-path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
+% Add the ego car
+egoCar = vehicle(scenario, ...
+    'ClassID', 1, ...
+    'Position', [30.2 20.6 0]);
+waypoints = [30.2 20.6 0;
+    31.5 20.3 0;
+    38.6 17.5 0;
+    39 10.6 0;
+    34.6 6.3 0;
+    30.3 2.5 0;
+    29.9 -5.5 0;
+    32.2 -16 0;
+    29.2 -21.7 0;
+    23.7 -23.5 0;
+    17.2 -22.8 0;
+    13 -20.4 0;
+    9.2 -15.9 0;
+    4.1 -14.1 0;
+    2.3 -5.8 0;
+    2.9 3.3 0;
+    7.5 11.7 0;
+    16.1 19.7 0;
+    21.1 21.8 0;
+    26.9 19.9 0;
+    31.5 20.6 0];
+speed = 60;
+trajectory(egoCar, waypoints, speed);
 
-% Add a car in front of the ego vehicle
-leadCar = vehicle(scenario, 'ClassID', 1);
-path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
-
-% Add a car that travels at 35 m/s along the road and passes the ego vehicle
-passingCar = vehicle(scenario, 'ClassID', 1);
-waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
-path(passingCar, waypoints, 35);
-
-% Add a car behind the ego vehicle
-chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
-
+% Add the non-ego actors
+truck = vehicle(scenario, ...
+    'ClassID', 2, ...
+    'Length', 8.2, ...
+    'Width', 2.5, ...
+    'Height', 3.5, ...
+    'Position', [27.1 -23.2 0]);
+waypoints = [27.1 -23.2 0;
+    17.5 -22.7 0;
+    10.3 -18.2 0;
+    6.1 -7.4 0;
+    9.1 4.4 0;
+    13.4 11.1 0;
+    20.2 17.8 0;
+    34.5 20.7 0;
+    39.5 15.7 0;
+    38.2 8.6 0;
+    30.4 2.9 0;
+    30.4 -9.4 0;
+    32.2 -17.5 0;
+    28.8 -21.7 0];
+speed = 22;
+trajectory(truck, waypoints, speed);
 sensors = cell(8,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
 sensors{1} = radarDetectionGenerator('SensorIndex', 1, 'Height', 0.2, 'MaxRange', 174, ...
@@ -35,13 +76,13 @@ sensors{2} = radarDetectionGenerator('SensorIndex', 2, 'Height', 0.2, 'Yaw', 180
 
 % Rear-left-facing short-range radar sensor at the left rear wheel well of the car.
 sensors{3} = radarDetectionGenerator('SensorIndex', 3, 'Height', 0.2, 'Yaw', 120, ...
-    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
-    'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
+    'SensorLocation', [0, egoCar.Width/2], 'MaxRange', 15, 'ReferenceRange', 50, ...
+    'FieldOfView', [100, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Rear-right-facing short-range radar sensor at the right rear wheel well of the car.
 sensors{4} = radarDetectionGenerator('SensorIndex', 4, 'Height', 0.2, 'Yaw', -120, ...
-    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 30, 'ReferenceRange', 50, ...
-    'FieldOfView', [90, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
+    'SensorLocation', [0, -egoCar.Width/2], 'MaxRange', 15, 'ReferenceRange', 50, ...
+    'FieldOfView', [100, 5], 'AzimuthResolution', 10, 'RangeResolution', 1.25);
 
 % Front-left-facing short-range radar sensor at the left front wheel well of the car.
 sensors{5} = radarDetectionGenerator('SensorIndex', 5, 'Height', 0.2, 'Yaw', 60, ...
