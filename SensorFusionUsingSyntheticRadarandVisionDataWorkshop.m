@@ -22,7 +22,7 @@ path(passingCar, waypoints, 35);
 
 % Add a car behind the ego vehicle
 chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
+path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 65); % On right lane
 
 sensors = cell(8,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
