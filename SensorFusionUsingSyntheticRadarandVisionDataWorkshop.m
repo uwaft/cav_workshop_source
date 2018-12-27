@@ -2,7 +2,7 @@
 scenario = drivingScenario;
 scenario.SampleTime = 0.01;
 
-roadCenters = [0 0; 50 0; 100 0; 250 20; 500 40];
+roadCenters = [0 0; 50 0; 75 0; 100 0; 250 20; 500 40];
 road(scenario, roadCenters, 'lanes',lanespec(2));
 
 % Create the ego vehicle that travels at 25 m/s along the road.  Place the
@@ -15,16 +15,19 @@ path(egoCar, roadCenters(2:end,:) - [0 1.8], 25); % On right lane
 leadCar = vehicle(scenario, 'ClassID', 1);
 path(leadCar, [70 0; roadCenters(3:end,:)] - [0 1.8], 25); % On right lane
 
-% Add a car that travels at 35 m/s along the road and passes the ego vehicle
+% Add a slow moving car behind the ego vehicle in the left lane
+chaseCar = vehicle(scenario, 'ClassID', 1);
+path(chaseCar, [5 0; roadCenters(3:end,:)] - [0 -1.8], 26); % On left lane
+
+% Add a car that travels at 35 m/s along the road and passes the slow car 
+% using the right lane and switch to left lane to pass the ego vehicle
 passingCar = vehicle(scenario, 'ClassID', 1);
-waypoints = [0 -1.8; 50 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
+waypoints = [0 -1.8; 50 -1.8; 75 1.8; 100 1.8; 250 21.8; 400 32.2; 500 38.2];
 path(passingCar, waypoints, 35);
 
-% Add a car behind the ego vehicle
-chaseCar = vehicle(scenario, 'ClassID', 1);
-path(chaseCar, [25 0; roadCenters(1:end,:)] - [0 1.8], 25); % On right lane
 
-sensors = cell(8,1);
+
+sensors = cell(10,1);
 % Front-facing long-range radar sensor at the center of the front bumper of the car.
 sensors{1} = radarDetectionGenerator('SensorIndex', 1, 'Height', 0.2, 'MaxRange', 174, ...
     'SensorLocation', [egoCar.Wheelbase + egoCar.FrontOverhang, 0], 'FieldOfView', [20, 5]);
@@ -62,6 +65,14 @@ sensors{7} = visionDetectionGenerator('SensorIndex', 7, 'FalsePositivesPerImage'
 % Rear-facing camera located at rear windshield.
 sensors{8} = visionDetectionGenerator('SensorIndex', 8, 'FalsePositivesPerImage', 0.1, ...
     'SensorLocation', [0.2*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 180);
+
+% Left-facing camera located at left B pillar.
+sensors{9} = visionDetectionGenerator('SensorIndex', 9, 'FalsePositivesPerImage', 0.1, ...
+    'SensorLocation', [0.65*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', 90);
+
+% Right-facing camera located at right B pillar.
+sensors{10} = visionDetectionGenerator('SensorIndex', 10, 'FalsePositivesPerImage', 0.1, ...
+    'SensorLocation', [0.65*egoCar.Wheelbase 0], 'Height', 1.1, 'Yaw', -90);
 
 % Initiate the tracker
 tracker = multiObjectTracker('FilterInitializationFcn', @initSimDemoFilter, ...
