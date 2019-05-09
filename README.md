@@ -9,7 +9,7 @@ For the challenge you need to:
 `git clone git@github.com:uwaft/cav_workshop_source.git`  
 2. Create a new branch:  
 `git checkout -b \<name\>_workshop`  
-3. Costomize the code with
+3. Customize the code with
 your own road scenario, car configuration and any other changes you want to make!
 4. Push your changes:  
 `git push origin \<name\>_workshop`
